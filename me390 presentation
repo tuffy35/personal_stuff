@@ -1,0 +1,55 @@
+import os
+os.system('cls')
+
+# Data
+
+exam_scores = (95, 80, 45, 60, 95, 86, 85, 83, 92, 88, 89, 100, 80, 75, 85, 92, 80, 79, 74, 62, 36, 75, 45, 85, 75, 89, 90)
+
+# Making sure that the score the user inputs is a number between 0 and 100
+
+try:
+    myscore = int(input("What score did you get on the exam? "))
+except ValueError as e:
+    print("this is a letter, please enter a number", e)
+
+
+if myscore < 0:
+    print("this is not a possible exam score")
+elif myscore > 100:
+    print("this is not a possible exam score")
+else:
+    print("hey not bad!")
+
+# Determining percentile and letter grade 
+# Percentile
+
+total_scores = len(exam_scores) + 1
+
+lowcount = 0
+
+for i,d in enumerate(exam_scores):
+    if d < myscore:
+        lowcount = lowcount + 1
+
+percentile = lowcount / total_scores * 100
+
+# Letter Grade
+
+lettergrade = ""
+
+if myscore >= 90:
+    lettergrade = "A"
+elif myscore >= 80 | myscore < 90:
+    lettergrade = "B"
+elif myscore >= 70 | myscore < 80:
+    lettergrade = "C"
+elif myscore >= 65 | myscore < 70:
+    lettergrade = "D"
+else:
+    lettergrade = "F"
+
+print("you scored in the", percentile, "th percentile, and you received a letter grade of", lettergrade)
+
+
+
+
