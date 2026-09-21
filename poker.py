@@ -56,7 +56,7 @@ if total == 0:
     sorted = sort_low_to_high(unsorted)
 
     # loop through the sorted list, making the biggest loser pay the biggest winner. continue to work in until no more money is owed
-
+    payouts = []
     while len(sorted)>0:
 
         # call the biggest loser "loser", and the biggest winner "winner"
@@ -68,19 +68,19 @@ if total == 0:
         if abs(loser.amount) > winner.amount:
             loser.amount = loser.amount + winner.amount
             sorted.remove(winner)
-            print(loser.name,'pays', winner.name, '$', f"{winner.amount/1000:.2f}")
+            payouts.append(str(loser.name)+' pays '+ str(winner.name)+ ' $' + str(f"{winner.amount/1000:.2f}")+ "\n")
 
         # case 2: loser loses less than the winner wins    
         elif abs(loser.amount) < winner.amount:
             winner.amount = winner.amount + loser.amount
             sorted.remove(loser)
-            print(loser.name,'pays', winner.name, '$', f"{abs(loser.amount)/1000:.2f}")
+            payouts.append(str(loser.name)+' pays '+ str(winner.name)+ ' $'+ str(f"{abs(loser.amount)/1000:.2f}")+"\n")
 
         # case 3: winner and loser are equal    
         elif abs(loser.amount) == abs(winner.amount):
             sorted.remove(winner)
             sorted.remove(loser)
-            print(loser.name,'pays', winner.name, '$', f"{winner.amount/1000:.2f}")
+            payouts.append(str(loser.name)+' pays '+ str(winner.name)+ ' $'+ str(f"{winner.amount/1000:.2f}")+"\n")
 
         # re-sorting before we calculate the next transaction
         unsorted = sorted
@@ -94,6 +94,10 @@ if total == 0:
 else:
     print('your doodoo brain inputted the numbers wrong')
 
-# close the file because it's good practice
+# writing outputs to text file
+f1 = open("Ledger.txt", "w")
+f1.writelines(payouts)
 
+# close the files because it's good practice
+f1.close()
 text.close()
