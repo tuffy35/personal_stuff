@@ -1,9 +1,22 @@
+# NEXT UPDATE: after payments are all done, organize them such that each debtor's
+# payments are listed consecutively to improve readability
 # creating a person class that contains a person's name and the amount they are up/down
 
 class Person:
     def __init__(self, name, amount):
         self.name = name
         self.amount = amount
+
+# creating function to sort the arrays
+def sort_low_to_high(unsorted):
+    sorted = []
+    while len(unsorted)>0:
+        SmallIndex = 0
+        for m in range(len(unsorted)):
+            if unsorted[m].amount < unsorted[SmallIndex].amount:
+                SmallIndex = m
+        sorted.append(unsorted.pop(SmallIndex))
+    return sorted
 
 # uploading and reading the data from a text file named "NameList"     
 
@@ -39,17 +52,8 @@ if total == 0:
         if unsorted[p].amount == 0:
             del unsorted[p]
 
-
-    # sorting unsorted list into increasing order
-
-    sorted = []
-    while len(unsorted)>0:
-        SmallIndex = 0
-        for m in range(len(unsorted)):
-            if unsorted[m].amount < unsorted[SmallIndex].amount:
-                SmallIndex = m
-        sorted.append(unsorted.pop(SmallIndex))
-
+    # initial sort
+    sorted = sort_low_to_high(unsorted)
 
     # loop through the sorted list, making the biggest loser pay the biggest winner. continue to work in until no more money is owed
 
@@ -64,19 +68,25 @@ if total == 0:
         if abs(loser.amount) > winner.amount:
             loser.amount = loser.amount + winner.amount
             sorted.remove(winner)
-            print(loser.name,'pays', winner.name, '$', winner.amount/1000)
+            print(loser.name,'pays', winner.name, '$', f"{winner.amount/1000:.2f}")
 
         # case 2: loser loses less than the winner wins    
         elif abs(loser.amount) < winner.amount:
             winner.amount = winner.amount + loser.amount
             sorted.remove(loser)
-            print(loser.name,'pays', winner.name, '$', abs(loser.amount)/1000)
+            print(loser.name,'pays', winner.name, '$', f"{abs(loser.amount)/1000:.2f}")
 
         # case 3: winner and loser are equal    
         elif abs(loser.amount) == abs(winner.amount):
             sorted.remove(winner)
             sorted.remove(loser)
-            print(loser.name,'pays', winner.name, '$', winner.amount/1000)
+            print(loser.name,'pays', winner.name, '$', f"{winner.amount/1000:.2f}")
+
+        # re-sorting before we calculate the next transaction
+        unsorted = sorted
+        del sorted
+        sorted = sort_low_to_high(unsorted)
+
     print()
 
 # this else statement runs if the total wasn't equal to 0
