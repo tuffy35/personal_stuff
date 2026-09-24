@@ -1,5 +1,5 @@
-# NEXT UPDATE: after payments are all done, organize them such that each debtor's
-# payments are listed consecutively to improve readability
+from collections import defaultdict
+
 # creating a person class that contains a person's name and the amount they are up/down
 
 class Person:
@@ -92,11 +92,25 @@ if total == 0:
 # this else statement runs if the total wasn't equal to 0
 
 else:
-    print('your doodoo brain inputted the numbers wrong')
+    print('inputs do not net to 0. check your numbers and try again')
+
+# sorting the payouts so debtors are linked together
+grouped_transactions = defaultdict(list)
+
+for transaction in payouts:
+    name = transaction.split(" pays ")[0]
+    grouped_transactions[name].append(transaction)
+
+debtors = grouped_transactions.keys()
+
+sorted_payouts = []
+
+for debtor in debtors:
+    sorted_payouts.extend(grouped_transactions[debtor])
 
 # writing outputs to text file
 f1 = open("Ledger.txt", "w")
-f1.writelines(payouts)
+f1.writelines(sorted_payouts)
 
 # close the files because it's good practice
 f1.close()
