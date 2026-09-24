@@ -1,4 +1,9 @@
 from collections import defaultdict
+from email.message import EmailMessage
+import smtplib
+from datetime import date
+import os
+from dotenv import load_dotenv
 
 # creating a person class that contains a person's name and the amount they are up/down
 
@@ -108,10 +113,40 @@ sorted_payouts = []
 for debtor in debtors:
     sorted_payouts.extend(grouped_transactions[debtor])
 
+sorted_payouts_onestring = ""
+for items in sorted_payouts:
+    sorted_payouts_onestring += items
+
 # writing outputs to text file
 f1 = open("Ledger.txt", "w")
 f1.writelines(sorted_payouts)
 
+# setting it up so it sends you an email with the ledger once you run
+
+load_dotenv()
+
+SENDER_EMAIL = os.getenv("GMAIL_EMAIL")
+APP_PASSWORD = os.getenv("GMAIL_PW")
+RECIPIENT_EMAIL = input("what email address should I send the ledger to? ")
+
+msg = EmailMessage()
+msg["Subject"] = "Poker Ledger " +  date.today().isoformat()
+msg["From"] = SENDER_EMAIL
+msg["To"] = RECIPIENT_EMAIL
+msg.set_content("Poker ledger generated on " + date.today().isoformat() + "\n\n" + sorted_payouts_onestring)
+
+try:
+    with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+        smtp.starttls()
+        smtp.login(SENDER_EMAIL, APP_PASSWORD)
+        smtp.send_message(msg)
+
+        print("email sent successfully")
+
+except Exception as e:
+    print(f"failed to send email. Error: {e}")
+
 # close the files because it's good practice
 f1.close()
 text.close()
+
