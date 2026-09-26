@@ -112,34 +112,50 @@ if total == 0:
     for items in sorted_payouts:
         sorted_payouts_onestring += items
 
+    print(sorted_payouts_onestring)
+
     # writing outputs to text file
     f1 = open("Ledger.txt", "w")
     f1.writelines(sorted_payouts)
 
     # setting it up so it sends you an email with the ledger once you run
 
-    load_dotenv()
+    email_request_flag = input("Do you want the ledger sent via email? (Y/n) ")
 
-    SENDER_EMAIL = os.getenv("GMAIL_EMAIL")
-    APP_PASSWORD = os.getenv("GMAIL_PW")
-    RECIPIENT_EMAIL = input("what email address should I send the ledger to? ")
+    if email_request_flag == "Y":
 
-    msg = EmailMessage()
-    msg["Subject"] = "Poker Ledger " +  date.today().isoformat()
-    msg["From"] = SENDER_EMAIL
-    msg["To"] = RECIPIENT_EMAIL
-    msg.set_content("Poker ledger generated on " + date.today().isoformat() + "\n\n" + sorted_payouts_onestring)
+        load_dotenv()
 
-    try:
-        with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
-            smtp.starttls()
-            smtp.login(SENDER_EMAIL, APP_PASSWORD)
-            smtp.send_message(msg)
+        SENDER_EMAIL = os.getenv("GMAIL_EMAIL")
+        APP_PASSWORD = os.getenv("GMAIL_PW")
+        RECIPIENT_EMAIL = input("what email address should I send the ledger to? ")
+        
+        additional_email_flag = True
+        while additional_email_flag:
+            additional_email_question = input("do you want to add another email? (Y/n) ")
+            if additional_email_question == "Y":
+                additional_email = input("enter the next email address: ")
+                RECIPIENT_EMAIL += ","
+                RECIPIENT_EMAIL += additional_email
+            if additional_email_question == "n":
+                additional_email_flag = False
 
-            print("email sent successfully")
+        msg = EmailMessage()
+        msg["Subject"] = "Poker Ledger " +  date.today().isoformat()
+        msg["From"] = SENDER_EMAIL
+        msg["To"] = RECIPIENT_EMAIL
+        msg.set_content("Poker ledger generated on " + date.today().isoformat() + "\n\n" + sorted_payouts_onestring)
 
-    except Exception as e:
-        print(f"failed to send email. Error: {e}")
+        try:
+            with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+                smtp.starttls()
+                smtp.login(SENDER_EMAIL, APP_PASSWORD)
+                smtp.send_message(msg)
+
+                print("email sent successfully")
+
+        except Exception as e:
+            print(f"failed to send email. Error: {e}")
 
     # close the files because it's good practice
     f1.close()
